@@ -1,22 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Convertidor MP4 Online</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversión de Archivos</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Convertidor de Vídeo a MP4</h1>
-    <p>Sube tu vídeo y descárgalo en formato MP4. Rápido, seguro y gratis.</p>
-    <form action="https://<TU_DOMINIO_BACKEND>/upload" method="post" enctype="multipart/form-data">
-      <input type="file" name="video" accept="video/*" required />
-      <button type="submit">Convertir a MP4</button>
-    </form>
-    <footer>
-      <p>&copy; 2025 - SafeConvert</p>
-    </footer>
-  </div>
+  <h1>Sube tu archivo de vídeo para convertir a MP4</h1>
+
+  <!-- Formulario para cargar el archivo -->
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label for="fileInput">Selecciona un archivo de vídeo:</label>
+    <input type="file" id="fileInput" name="file" accept="video/*" required>
+    <button type="submit">Subir</button>
+  </form>
+
+  <p id="status"></p>
+
+  <script>
+    // Captura el formulario y el archivo
+    const form = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('fileInput');
+    const statusText = document.getElementById('status');
+
+    // Lógica para manejar la carga del archivo
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault(); // Evita que el formulario se recargue
+
+      const file = fileInput.files[0];
+      if (!file) {
+        statusText.textContent = "Por favor, selecciona un archivo.";
+        return;
+      }
+
+      // Crear un FormData para enviar el archivo
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        // Enviar el archivo al backend
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          statusText.textContent = "¡Archivo subido exitosamente!";
+        } else {
+          statusText.textContent = "Error al subir el archivo. Intenta de nuevo.";
+        }
+      } catch (error) {
+        statusText.textContent = "Error al conectar con el servidor.";
+        console.error(error);
+      }
+    });
+  </script>
 </body>
 </html>
