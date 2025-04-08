@@ -7,39 +7,38 @@
 </head>
 <body>
     <h1>Subir Archivo de Video</h1>
-
     <form id="upload-form">
-      <input type="file" id="file-input" name="file" accept=".mp4, .avi, .mkv, .mov, .flv, .wmv, video/*" required>
+        <input type="file" id="file-input" name="file" accept=".mp4, .avi, .mkv, .mov, .flv, .wmv, video/*" required>
         <button type="submit">Subir y Convertir</button>
     </form>
-
+    
     <script>
         const form = document.getElementById('upload-form');
         const fileInput = document.getElementById('file-input');
-
+    
         form.addEventListener('submit', async function (e) {
             e.preventDefault();  // Evita el comportamiento predeterminado del formulario
-
+    
             const file = fileInput.files[0];  // Toma el primer archivo del input
-
+    
             if (!file) {
                 alert('Por favor selecciona un archivo');
                 return;
             }
-
+    
             const formData = new FormData();
             formData.append('file', file);  // Añade el archivo al FormData
-
+    
             try {
                 const response = await fetch('https://weathered-water-e9b6.jojaguete.workers.dev/', {
                     method: 'POST',  // Aquí aseguramos que estamos enviando una solicitud POST
                     body: formData,
                 });
-
+    
                 const result = await response.json();
                 
                 if (response.ok) {
-                    alert('Archivo cargado con éxito');
+                    alert('Archivo cargado con éxito: ' + result.message);
                 } else {
                     alert('Hubo un error al cargar el archivo: ' + result.error);
                 }
@@ -49,5 +48,6 @@
             }
         });
     </script>
+    
 </body>
 </html>
