@@ -1,93 +1,53 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conversión de Archivos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 20px;
-    }
-    input[type="file"] {
-      margin: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .message {
-      text-align: center;
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convertir Video a MP4</title>
 </head>
 <body>
+    <h1>Subir Archivo de Video</h1>
 
-  <h1>Sube tu archivo para convertirlo a MP4</h1>
+    <form id="upload-form">
+      <input type="file" id="file-input" name="file" accept=".mp4, .avi, .mkv, .mov, .flv, .wmv, video/*" required>
+        <button type="submit">Subir y Convertir</button>
+    </form>
 
-  <form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" id="fileInput" name="file" required />
-    <button type="submit">Subir archivo</button>
-  </form>
+    <script>
+        const form = document.getElementById('upload-form');
+        const fileInput = document.getElementById('file-input');
 
-  <div class="message" id="message"></div>
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();  // Evita el comportamiento predeterminado del formulario
 
-  <script>
-    const form = document.getElementById('uploadForm');
-    const messageDiv = document.getElementById('message');
+            const file = fileInput.files[0];  // Toma el primer archivo del input
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
-      
-      if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
+            if (!file) {
+                alert('Por favor selecciona un archivo');
+                return;
+            }
 
-        // Muestra mensaje de carga
-        messageDiv.textContent = 'Subiendo el archivo...';
+            const formData = new FormData();
+            formData.append('file', file);  // Añade el archivo al FormData
 
-        try {
-          const response = await fetch('https://weathered-water-e9b6.jojaguete.workers.dev/', {
-            method: 'POST',
-            body: formData,
-          });
+            try {
+                const response = await fetch('https://weathered-water-e9b6.jojaguete.workers.dev/', {
+                    method: 'POST',  // Aquí aseguramos que estamos enviando una solicitud POST
+                    body: formData,
+                });
 
-          const result = await response.json();
-
-          if (result.success) {
-            messageDiv.innerHTML = `Archivo subido y convertido con éxito. <a href="${result.downloadUrl}" target="_blank">Descargar archivo convertido</a>`;
-          } else {
-            messageDiv.textContent = 'Hubo un error en el proceso de conversión. Por favor, inténtalo nuevamente.';
-          }
-        } catch (error) {
-          console.error('Error al subir el archivo:', error);
-          messageDiv.textContent = 'Hubo un error al procesar el archivo. Intenta nuevamente más tarde.';
-        }
-      } else {
-        messageDiv.textContent = 'Por favor, selecciona un archivo para subir.';
-      }
-    });
-  </script>
-
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Archivo cargado con éxito');
+                } else {
+                    alert('Hubo un error al cargar el archivo: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error al subir el archivo:', error);
+                alert('Error al subir el archivo');
+            }
+        });
+    </script>
 </body>
 </html>
